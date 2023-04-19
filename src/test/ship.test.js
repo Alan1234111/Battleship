@@ -8,5 +8,13 @@ describe("Ship functions", () => {
     expect(destroyer.getObject().numOfHit).toBe(1);
   });
 
-  //   it("Is hit function add numOfHit to a ship", () => {});
+  it("Check if the ship is alerady Sunk", () => {
+    const destroyer = ship(2);
+    destroyer.hit();
+    destroyer.isSunk();
+    expect(destroyer.getObject().isSunk).toBe(false);
+    destroyer.hit();
+    destroyer.isSunk();
+    expect(destroyer.getObject().isSunk).toBe(true);
+  });
 });
