@@ -1,8 +1,10 @@
-const Ship = (length) => {
+const Ship = (length, xCords, yCords) => {
   const ship = {
     lengthToSunk: length,
     numOfHit: 0,
     isSunk: false,
+    xCords: xCords,
+    yCords: yCords,
   };
 
   return {
