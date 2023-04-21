@@ -1,5 +1,6 @@
 const ship = require("../factories/Ship");
 const GameboardFactory = require("../factories/Gameboard");
+const {EntryPlugin} = require("webpack");
 
 const gameboard = GameboardFactory.gameboard;
 const recordedShots = GameboardFactory.recordedShots;
@@ -19,17 +20,18 @@ it("Check that missed shot is recorder", () => {
 });
 
 it("Check is all ships sunk", () => {
-  const ships = {
-    carrier: ship(5, [2, 3, 4, 5, 6], [1, 1, 1, 1, 1]),
-    battleship: ship(4, [2, 2, 2, 2], [1, 2, 3, 4]),
-    cruiser: ship(3, [4, 5, 6], [4, 4, 4]),
-  };
+  const ships = [ship(5, [2, 3, 4, 5, 6], [1, 1, 1, 1, 1]), ship(4, [2, 2, 2, 2], [1, 2, 3, 4]), ship(3, [4, 5, 6], [4, 4, 4])];
 
   ships.forEach((ship) => {
-    for (let i = 0; i < ship.length; i++) {
+    for (let i = 0; i < ship.getObject().lengthToSunk; i++) {
       ship.hit();
+      ship.isSunk();
     }
   });
 
-  ships.forEach((ship) => {});
+  const isAllShipSunk = ships.every((ship) => {
+    return ship.getObject().isSunk;
+  });
+
+  expect(isAllShipSunk).toBe(true);
 });
