@@ -5,17 +5,17 @@ const {EntryPlugin} = require("webpack");
 const gameboard = GameboardFactory.gameboard;
 const recordedShots = GameboardFactory.recordedShots;
 
-it("Check that hit area hit ship", () => {
+it("Check that shot hit ship", () => {
   const destroyer = ship(2, [2, 3], [3, 3]);
 
-  gameboard(destroyer).receiveAttack(2, 3);
+  gameboard().receiveAttack(destroyer, 2, 3);
   expect(destroyer.getObject().numOfHit).toBe(1);
 });
 
 it("Check that missed shot is recorder", () => {
   const destroyer = ship(2, [2, 3], [3, 3]);
 
-  gameboard(destroyer).receiveAttack(5, 4);
+  gameboard().receiveAttack(destroyer, 5, 4);
   expect(recordedShots).toEqual([[5, 4]]);
 });
 
@@ -29,9 +29,5 @@ it("Check is all ships sunk", () => {
     }
   });
 
-  const isAllShipSunk = ships.every((ship) => {
-    return ship.getObject().isSunk;
-  });
-
-  expect(isAllShipSunk).toBe(true);
+  expect(gameboard().isAllShipSunk(ships)).toBe(true);
 });
