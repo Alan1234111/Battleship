@@ -1,29 +1,39 @@
 const ship = require("../factories/Ship");
-const GameboardFactory = require("../factories/Gameboard");
+const Gameboard = require("../factories/Gameboard");
 const {EntryPlugin} = require("webpack");
 
-const gameboard = GameboardFactory.gameboard;
-const recordedShots = GameboardFactory.recordedShots;
+// const gameboard = GameboardFactory.gameboard;
+// const recordedShots = GameboardFactory.recordedShots;
 
-it("Check that shot hit ship", () => {
-  const destroyer = ship(2, [2, 3], [3, 3]);
+it("Check that hit area hit ship", () => {
+  const gameboard = Gameboard();
+  const ships = [ship(5, [2, 3, 4, 5, 6], [1, 1, 1, 1, 1]), ship(4, [2, 2, 2, 2], [1, 2, 3, 4]), ship(3, [4, 5, 6], [4, 4, 4])];
+  const hittenShip = ships[1];
+  gameboard.receiveAttack(ships, 2, 3);
 
-  gameboard().receiveAttack(destroyer, 2, 3);
-  expect(destroyer.getObject().numOfHit).toBe(1);
+  expect(hittenShip.numOfHit).toBe(1);
 });
 
 it("Check that missed shot is recorder", () => {
-  const destroyer = ship(2, [2, 3], [3, 3]);
+  const gameboard = Gameboard();
+  const ships = [ship(5, [2, 3, 4, 5, 6], [1, 1, 1, 1, 1]), ship(4, [2, 2, 2, 2], [1, 2, 3, 4]), ship(3, [4, 5, 6], [4, 4, 4])];
 
-  gameboard().receiveAttack(destroyer, 5, 4);
-  expect(recordedShots).toEqual([[5, 4]]);
+  gameboard.receiveAttack(ships, 7, 7);
+  gameboard.receiveAttack(ships, 7, 6);
+  gameboard.receiveAttack(ships, 2, 3);
+
+  expect(gameboard.recordedShots).toEqual([
+    [7, 7],
+    [7, 6],
+  ]);
 });
 
 it("Check is all ships sunk", () => {
   const ships = [ship(5, [2, 3, 4, 5, 6], [1, 1, 1, 1, 1]), ship(4, [2, 2, 2, 2], [1, 2, 3, 4]), ship(3, [4, 5, 6], [4, 4, 4])];
+  const gameboard = Gameboard;
 
   ships.forEach((ship) => {
-    for (let i = 0; i < ship.getObject().lengthToSunk; i++) {
+    for (let i = 0; i < ship.lengthToSunk; i++) {
       ship.hit();
       ship.isSunk();
     }
