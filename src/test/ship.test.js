@@ -5,23 +5,26 @@ describe("Ship functions", () => {
     const destroyer = ship(2);
     destroyer.hit();
 
-    expect(destroyer.getObject().numOfHit).toBe(1);
+    expect(destroyer.numOfHit).toBe(1);
   });
 
   it("Check it the ship is alerady Sunk", () => {
     const destroyer = ship(2);
     destroyer.hit();
-    destroyer.isSunk();
-    expect(destroyer.getObject().isSunk).toBe(false);
     destroyer.hit();
     destroyer.isSunk();
-    expect(destroyer.getObject().isSunk).toBe(true);
+    expect(destroyer.Sunk).toBe(true);
   });
 
-  it("Check it the ship have right cords", () => {
+  it("Check it the ship have right x cords", () => {
     const destroyer = ship(2, [2, 3], [3, 3]);
 
-    expect(destroyer.getObject().xCords).toEqual([2, 3]);
-    expect(destroyer.getObject().yCords).toEqual([3, 3]);
+    expect(destroyer.xCords).toEqual([2, 3]);
+  });
+
+  it("Check it the ship have right y cords", () => {
+    const destroyer = ship(2, [2, 3], [3, 3]);
+
+    expect(destroyer.yCords).toEqual([3, 3]);
   });
 });
