@@ -2,24 +2,21 @@ const Ship = (length, xCords, yCords) => {
   const ship = {
     lengthToSunk: length,
     numOfHit: 0,
-    isSunk: false,
+    Sunk: false,
     xCords: xCords,
     yCords: yCords,
-  };
 
-  return {
     hit: () => {
       ship.numOfHit++;
     },
 
     isSunk: () => {
-      if (ship.lengthToSunk == ship.numOfHit) {
-        ship.isSunk = true;
+      if (ship.lengthToSunk === ship.numOfHit) {
+        ship.Sunk = true;
       }
     },
-
-    getObject: () => ship,
   };
+  return ship;
 };
 
 module.exports = Ship;
