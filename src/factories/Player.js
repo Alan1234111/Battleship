@@ -27,4 +27,4 @@ const Player = () => {
   return player;
 };
 
-module.exports = Player;
+export default Player;

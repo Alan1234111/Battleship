@@ -19,4 +19,4 @@ const Ship = (length, xCords, yCords) => {
   return ship;
 };
 
-module.exports = Ship;
+export default Ship;
