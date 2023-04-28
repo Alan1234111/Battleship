@@ -90,9 +90,11 @@
 }
 
 .hit {
+  background-color: #ff0000;
 }
 
 .miss-hit {
+  background-color: #c0c0c0;
 }
 
 .sunk {
