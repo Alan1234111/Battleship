@@ -19,20 +19,17 @@ const Gameboard = () => {
     },
 
     receiveAttack: function (xHitCord, yHitCord) {
-      let hit = false;
+
       this.ships.forEach((ship) => {
         for (let i = 0; i < ship.xCords.length; i++) {
           if (ship.xCords[i] === parseInt(xHitCord) && ship.yCords[i] === parseInt(yHitCord)) {
             ship.hit();
             ship.isSunk();
-            hit = true;
             break;
           }
         }
       });
-      if (!hit) {
         this.recordShot([xHitCord, yHitCord]);
-      }
     },
 
     recordShot: function (recordShot) {
