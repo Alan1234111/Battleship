@@ -1,8 +1,10 @@
 const Player = () => {
   const player = {};
+  player.turn = "player";
   player.playerTurn = (gameboard, tile, xCord, yCord) => {
-    if (gameboard.isAlreadyHit(xCord, yCord)) return;
+    if (gameboard.isAlreadyHit(xCord, yCord) || player.turn === "Ai") return;
 
+    player.turn = "Ai";
     gameboard.receiveAttack(tile, xCord, yCord);
   };
 
