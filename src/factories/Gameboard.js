@@ -47,11 +47,14 @@ const Gameboard = () => {
   };
 
   const isAlreadyHit = (xCord, yCord) => {
-    return recordedShots.forEach((shot) => {
+    let hit = false;
+    recordedShots.forEach((shot) => {
       if (shot[0] === xCord && shot[1] === yCord) {
-        return true;
+        hit = true;
       }
     });
+
+    return hit;
   };
 
   const getTile = (xCord, yCord) => {
