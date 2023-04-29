@@ -49,4 +49,9 @@ describe("Gameboard", () => {
 
     expect(gameboard.isAllShipSunk()).toBe(true);
   });
+
+  it("should return true if tile was already hitten", () => {
+    gameboard.receiveAttack(firstTile, 7, 7);
+    expect(gameboard.isAlreadyHit(7, 7)).toBe(true);
+  });
 });
