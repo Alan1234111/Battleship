@@ -1,38 +1,22 @@
 const Player = () => {
-  const player = {
-    makeRandomMoves: () => {
-      return Math.floor(Math.random() * 7);
-    },
+  const player = {};
+  player.playerTurn = (gameboard, tile, xCord, yCord) => {
+    if (gameboard.isAlreadyHit(xCord, yCord)) return;
 
-    playerTurn: (gameboard, xCord, yCord) => {
-      let isAlredyHit = false;
-      gameboard.recordedShots.forEach((shot) => {
-        if (shot[0] === xCord && shot[1] === yCord) {
-          isAlredyHit = true;
-        }
-      });
-
-      if (!isAlredyHit) {
-        gameboard.receiveAttack(xCord, yCord);
-      }
-    },
-
-    AiTurn: function (gameboard) {
-      let xCord = this.makeRandomMoves();
-      let yCord = this.makeRandomMoves();
-      let isTheSame = gameboard.recordedShots.some((shot) => {
-        if (xCord === shot[0] && yCord === shot[1]) {
-          return true;
-        }
-      });
-
-      if (!isTheSame) {
-        return gameboard.receiveAttack(xCord, yCord);
-      } else {
-        return this.AiTurn(gameboard);
-      }
-    },
+    gameboard.receiveAttack(tile, xCord, yCord);
   };
+
+  player.AiTurn = (gameboard) => {
+    let xCord, yCord;
+    do {
+      xCord = Math.floor(Math.random() * 10);
+      yCord = Math.floor(Math.random() * 10);
+    } while (gameboard.recordedShots.some((coord) => coord[0] === xCord && coord[1] === yCord));
+
+    const tile = gameboard.getTile(xCord, yCord);
+    gameboard.receiveAttack(tile, xCord, yCord);
+  };
+
   return player;
 };
 

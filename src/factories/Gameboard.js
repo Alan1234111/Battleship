@@ -1,49 +1,73 @@
 import Ship from "./Ship";
 
 const Gameboard = () => {
-  const gameboard = {
-    recordedShots: [],
-    ships: [],
+  const recordedShots = [];
+  const ships = [];
 
-    createShip: function (lengthToSunk, xCords, yCords) {
-      return this.ships.push(Ship(lengthToSunk, xCords, yCords));
-    },
-
-    placeShips: function () {
-      this.ships.forEach((ship) => {
-        for (let i = 0; i < ship.xCords.length; i++) {
-          const div = document.querySelector(`#player-board [data-x="${ship.xCords[i]}"][data-y="${ship.yCords[i]}"]`);
-          div.classList.add("ship");
-        }
-      });
-    },
-
-    receiveAttack: function (xHitCord, yHitCord) {
-
-      this.ships.forEach((ship) => {
-        for (let i = 0; i < ship.xCords.length; i++) {
-          if (ship.xCords[i] === parseInt(xHitCord) && ship.yCords[i] === parseInt(yHitCord)) {
-            ship.hit();
-            ship.isSunk();
-            break;
-          }
-        }
-      });
-        this.recordShot([xHitCord, yHitCord]);
-    },
-
-    recordShot: function (recordShot) {
-      this.recordedShots.push(recordShot);
-    },
-
-    isAllShipSunk: function () {
-      return this.ships.every((ship) => {
-        return ship.Sunk;
-      });
-    },
+  const createShip = (lengthToSunk, xCords, yCords) => {
+    ships.push(Ship(lengthToSunk, xCords, yCords));
   };
 
-  return gameboard;
+  const placeShips = () => {
+    ships.forEach((ship) => {
+      for (let i = 0; i < ship.xCords.length; i++) {
+        const div = document.querySelector(`#player-board [data-x="${ship.xCords[i]}"][data-y="${ship.yCords[i]}"]`);
+        div.classList.add("ship");
+      }
+    });
+  };
+
+  const receiveAttack = (tile, xHitCord, yHitCord) => {
+    let hit = false;
+
+    ships.forEach((ship) => {
+      for (let i = 0; i < ship.xCords.length; i++) {
+        if (ship.xCords[i] === parseInt(xHitCord) && ship.yCords[i] === parseInt(yHitCord)) {
+          ship.hit();
+          ship.isSunk();
+          tile.classList.add("hit");
+          hit = true;
+          break;
+        }
+      }
+    });
+
+    if (!hit) {
+      tile.classList.add("miss-hit");
+    }
+    recordShot([xHitCord, yHitCord]);
+  };
+
+  const recordShot = (recordShot) => {
+    recordedShots.push(recordShot);
+  };
+
+  const isAllShipSunk = () => {
+    return ships.every((ship) => ship.Sunk);
+  };
+
+  const isAlreadyHit = (xCord, yCord) => {
+    return recordedShots.forEach((shot) => {
+      if (shot[0] === xCord && shot[1] === yCord) {
+        return true;
+      }
+    });
+  };
+
+  const getTile = (xCord, yCord) => {
+    return document.querySelector(`#player-board [data-x="${xCord}"][data-y="${yCord}"]`);
+  };
+
+  return {
+    ships,
+    recordedShots,
+    createShip,
+    placeShips,
+    receiveAttack,
+    isAllShipSunk,
+    isAlreadyHit,
+    getTile,
+  };
 };
 
 export default Gameboard;

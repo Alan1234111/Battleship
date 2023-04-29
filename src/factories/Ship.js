@@ -1,21 +1,22 @@
 const Ship = (length, xCords, yCords) => {
-  const ship = {
-    lengthToSunk: length,
-    numOfHit: 0,
-    Sunk: false,
-    xCords: xCords,
-    yCords: yCords,
+  const ship = {};
 
-    hit: () => {
-      ship.numOfHit++;
-    },
+  ship.lengthToSunk = length;
+  ship.numOfHit = 0;
+  ship.Sunk = false;
+  ship.xCords = xCords;
+  ship.yCords = yCords;
 
-    isSunk: () => {
-      if (ship.lengthToSunk === ship.numOfHit) {
-        ship.Sunk = true;
-      }
-    },
+  ship.hit = () => {
+    ship.numOfHit++;
   };
+
+  ship.isSunk = () => {
+    if (ship.lengthToSunk === ship.numOfHit) {
+      ship.Sunk = true;
+    }
+  };
+
   return ship;
 };
 
