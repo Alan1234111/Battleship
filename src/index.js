@@ -4,8 +4,6 @@ import Gameboard from "./factories/Gameboard";
 
 const player = Player();
 const playerGameboard = Gameboard();
-
-const aiPlayer = Player();
 const aiGameboard = Gameboard();
 
 function createAndPlaceShips(gameboard, shipData) {
@@ -35,9 +33,10 @@ createAndPlaceShips(aiGameboard, [
 function handleAiGameboardClick() {
   player.playerTurn(playerGameboard, this, this.dataset.x, this.dataset.y);
 
-  setTimeout(() => {
-    aiPlayer.AiTurn(aiGameboard);
-  }, 1000);
+  if (player.turn !== "player") {
+    player.turn = "player";
+    player.AiTurn(aiGameboard);
+  }
 }
 
 const aiGameboardDivs = document.querySelectorAll("#enemy-board div");
