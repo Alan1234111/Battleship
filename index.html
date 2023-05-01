@@ -18,7 +18,8 @@
           <button class="nav-btn" id="rules">How to play</button>
         </nav>
       </header>
-      <div class="enemy-board" id="enemy-board">
+      <div class="enemy-board before-start" id="enemy-board">
+        <button id="start">Start</button>
         <div data-x="0" data-y="0"></div>
         <div data-x="1" data-y="0"></div>
         <div data-x="2" data-y="0"></div>
@@ -222,11 +223,22 @@
         <div data-x="8" data-y="9"></div>
         <div data-x="9" data-y="9"></div>
       </div>
-      <div data-x="" data-y="" class="options" id="options">
+      <div class="options" id="options">
         <button class="btn" id="random">Random board</button>
         <button class="btn" id="reset">Reset board</button>
       </div>
     </div>
+
+    <div class="wall hide"></div>
+
+    <div class="modal hide">
+      <div class="modal-content">
+        <h2>Game Over</h2>
+        <p class="win-info">Congratulations, Player 1! You are the winner.</p>
+        <button class="close-button">Close</button>
+      </div>
+    </div>
+
     <script src="main.js"></script>
   </body>
 </html>
