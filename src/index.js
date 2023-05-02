@@ -15,6 +15,8 @@ const aiGameboardDivs = document.querySelectorAll("#enemy-board div");
 const playerGameboardDivs = document.querySelectorAll("#player-board div");
 const startButton = document.getElementById("start");
 const enemyGameboardDiv = document.getElementById("enemy-board");
+const playerBoard = document.getElementById("player-board");
+const shipsPlaceholder = document.querySelectorAll(".place-ships .ship-draggable");
 
 function verticallyOrHorizontally() {
   const postion = Math.floor(Math.random() * 2);
@@ -37,9 +39,9 @@ function randomShipCoords(length, gameboard) {
     xCordFirst = Math.floor(Math.random() * (10 - length + 1));
     yCordFirst = Math.floor(Math.random() * (10 - length + 1));
 
-    isTheSame = gameboard.ships.forEach((ship) => {
-      let isXTheSame = ship.xCords.forEach((cord) => cord === xCordFirst);
-      let isYTheSame = ship.yCords.forEach((cord) => cord === yCordFirst);
+    isTheSame = gameboard.ships.some((ship) => {
+      let isXTheSame = ship.xCords.some((cord) => cord === xCordFirst);
+      let isYTheSame = ship.yCords.some((cord) => cord === yCordFirst);
       return isXTheSame && isYTheSame;
     });
   } while (isTheSame);
@@ -72,9 +74,13 @@ function resetBoard() {
   playerGameboard.ships.length = 0;
   playerGameboard.recordedShots.length = 0;
 
+  shipsPlaceholder.forEach((ship) => ship.classList.add("hide"));
+  shipsPlaceholder[0].classList.remove("hide");
+
   enemyGameboardDiv.classList.add("before-start");
   startButton.classList.remove("hide");
   randomBoardBtn.classList.remove("hide");
+  startButton.removeEventListener("click", startTheGame);
 }
 
 function renderAiBoard() {
@@ -87,6 +93,7 @@ function renderAiBoard() {
 
 function renderRandomBoard() {
   resetBoard();
+  shipsPlaceholder.forEach((ship) => ship.classList.add("hide"));
   randomShipCoords(5, playerGameboard);
   randomShipCoords(4, playerGameboard);
   randomShipCoords(3, playerGameboard);
@@ -136,6 +143,87 @@ function startTheGame() {
 aiGameboardDivs.forEach((div) => {
   div.addEventListener("click", handleAiGameboardClick);
 });
+
+shipsPlaceholder.forEach((ship) => {
+  ship.addEventListener("dragstart", () => {
+    ship.classList.add("dragging");
+  });
+
+  ship.addEventListener("dragend", () => {
+    ship.classList.remove("dragging");
+  });
+
+  ship.addEventListener("click", () => {
+    ship.classList.toggle("vertical");
+  });
+
+  const divs = ship.querySelectorAll("div");
+
+  divs.forEach((div) => {
+    div.addEventListener("mousedown", (e) => {
+      e.target.classList.add("holding-div");
+    });
+  });
+});
+
+function placeShip(placeToPut, ship, holdingDiv) {
+  // Declare variables with let or const
+  const xCord = parseInt(placeToPut.dataset.x, 10);
+  const yCord = parseInt(placeToPut.dataset.y, 10);
+  const shipsPlaces = [...ship.querySelectorAll("div")];
+  const lengthOfShip = shipsPlaces.length;
+  const offset = shipsPlaces.findIndex((shipPlace) => shipPlace === holdingDiv);
+  let xGoesOutRight, xGoesOutLeft, yGoesOutTop, yGoesOutBottom, condition;
+
+  // Refactor the conditional using an if-else statement
+  if (ship.classList.contains("vertical")) {
+    yGoesOutTop = yCord - offset;
+    yGoesOutBottom = yCord + lengthOfShip - offset - 1;
+    condition = yGoesOutTop < 0 || yGoesOutBottom > 9;
+  } else {
+    xGoesOutRight = xCord + lengthOfShip - offset - 1;
+    xGoesOutLeft = xCord - offset;
+    condition = xGoesOutRight > 9 || xGoesOutLeft < 0;
+  }
+
+  if (condition) return;
+
+  // Hide ship and show next placeholder or start button
+  ship.classList.add("hide");
+  ship.nextElementSibling ? ship.nextElementSibling.classList.remove("hide") : startButton.addEventListener("click", startTheGame, {once: true});
+
+  // Create arrays of x and y coordinates for ship placement
+  const xCoords = [];
+  const yCoords = [];
+
+  for (let i = 0; i < lengthOfShip; i++) {
+    if (ship.classList.contains("vertical")) {
+      xCoords.push(xCord);
+      yCoords.push(yCord + i - offset);
+    } else {
+      xCoords.push(xCord + i - offset);
+      yCoords.push(yCord);
+    }
+  }
+
+  // Create the ship and place it on the game board
+  playerGameboard.createShip(lengthOfShip, xCoords, yCoords);
+  playerGameboard.placeShips();
+}
+
+playerBoard.addEventListener("dragover", (event) => {
+  event.preventDefault();
+});
+
+playerBoard.addEventListener("drop", (event) => {
+  event.preventDefault();
+  const draggable = document.querySelector(".dragging");
+  const holdingDiv = document.querySelector(".holding-div");
+  holdingDiv.classList.remove("holding-div");
+
+  placeShip(event.target, draggable, holdingDiv);
+});
+
 closeBtn.addEventListener("click", reset);
 randomBoardBtn.addEventListener("click", renderRandomBoard);
 resetBoardBtn.addEventListener("click", resetBoard);
