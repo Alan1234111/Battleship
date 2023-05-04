@@ -12,7 +12,6 @@
     <div class="container">
       <header class="header" id="header">
         <h1>Battleship</h1>
-
         <nav class="nav" id="nav">
           <button class="nav-btn" id="home">Home</button>
           <button class="nav-btn" id="rules">How to play</button>
@@ -223,9 +222,40 @@
         <div data-x="8" data-y="9"></div>
         <div data-x="9" data-y="9"></div>
       </div>
+
       <div class="options" id="options">
         <button class="btn" id="random">Random board</button>
         <button class="btn" id="reset">Reset board</button>
+      </div>
+
+      <div class="place-ships" id="place-ships">
+        <div class="ship-draggable" id="carrier" draggable="true">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="ship-draggable hide" id="battleship" draggable="true">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="ship-draggable hide" id="cruiser" draggable="true">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="ship-draggable hide" id="submarine" draggable="true">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="ship-draggable hide" id="destroyer" draggable="true">
+          <div></div>
+          <div></div>
+        </div>
       </div>
     </div>
 
