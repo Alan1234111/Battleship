@@ -22,56 +22,39 @@ function verticallyOrHorizontally() {
   const postion = Math.floor(Math.random() * 2);
 
   if (postion) {
-    return "verticaly";
+    return "vertically";
   } else {
     return "horizontaly";
   }
 }
 
 function randomShipCoords(length, gameboard) {
-  let xCordFirst;
-  let yCordFirst;
-  let isTheSame = false;
   const xCoords = [];
   const yCoords = [];
-  let postion = verticallyOrHorizontally();
+  let position = verticallyOrHorizontally();
+  let turn = 0;
 
-  do {
-    xCordFirst = Math.floor(Math.random() * (10 - length + 1));
-    yCordFirst = Math.floor(Math.random() * (10 - length + 1));
+  while (turn < 100) {
+    const xCordFirst = Math.floor(Math.random() * (10 - length + 1));
+    const yCordFirst = Math.floor(Math.random() * (10 - length + 1));
 
-    isTheSame = gameboard.impossibleMoves.some((move) => {
-      let same = false;
-      if (postion === "verticaly") {
-        for (let i = 0; i <= length; i++) {
-          if (move.x === xCordFirst && move.y === yCordFirst + i) {
-            same = true;
-          }
+    if (
+      !gameboard.impossibleMoves.some((move) => {
+        if (position === "vertically") {
+          return move.x === xCordFirst && move.y >= yCordFirst && move.y < yCordFirst + length;
+        } else {
+          return move.y === yCordFirst && move.x >= xCordFirst && move.x < xCordFirst + length;
         }
-      } else {
-        for (let i = 0; i <= length; i++) {
-          if (move.x === xCordFirst + i && move.y === yCordFirst) {
-            same = true;
-          }
-        }
+      })
+    ) {
+      for (let i = 0; i < length; i++) {
+        xCoords.push(position === "vertically" ? xCordFirst : xCordFirst + i);
+        yCoords.push(position === "vertically" ? yCordFirst + i : yCordFirst);
       }
-
-      return same;
-    });
-  } while (isTheSame);
-
-  if (postion === "verticaly") {
-    for (let i = 0; i < length; i++) {
-      xCoords.push(xCordFirst);
-      yCoords.push(yCordFirst + i);
+      gameboard.createShip(length, xCoords, yCoords);
+      return;
     }
-    gameboard.createShip(length, xCoords, yCoords);
-  } else {
-    for (let i = 0; i < length; i++) {
-      xCoords.push(xCordFirst + i);
-      yCoords.push(yCordFirst);
-    }
-    gameboard.createShip(length, xCoords, yCoords);
+    turn++;
   }
 }
 
@@ -156,34 +139,7 @@ function startTheGame() {
   randomBoardBtn.classList.add("hide");
 }
 
-aiGameboardDivs.forEach((div) => {
-  div.addEventListener("click", handleAiGameboardClick);
-});
-
-shipsPlaceholder.forEach((ship) => {
-  ship.addEventListener("dragstart", () => {
-    ship.classList.add("dragging");
-  });
-
-  ship.addEventListener("dragend", () => {
-    ship.classList.remove("dragging");
-  });
-
-  ship.addEventListener("click", () => {
-    ship.classList.toggle("vertical");
-  });
-
-  const divs = ship.querySelectorAll("div");
-
-  divs.forEach((div) => {
-    div.addEventListener("mousedown", (e) => {
-      e.target.classList.add("holding-div");
-    });
-  });
-});
-
 function placeShip(placeToPut, ship, holdingDiv) {
-  // Declare variables with let or const
   const xCord = parseInt(placeToPut.dataset.x, 10);
   const yCord = parseInt(placeToPut.dataset.y, 10);
   const shipsPlaces = [...ship.querySelectorAll("div")];
@@ -191,7 +147,6 @@ function placeShip(placeToPut, ship, holdingDiv) {
   const offset = shipsPlaces.findIndex((shipPlace) => shipPlace === holdingDiv);
   let xGoesOutRight, xGoesOutLeft, yGoesOutTop, yGoesOutBottom, condition;
 
-  // Refactor the conditional using an if-else statement
   if (ship.classList.contains("vertical")) {
     yGoesOutTop = yCord - offset;
     yGoesOutBottom = yCord + lengthOfShip - offset - 1;
@@ -201,6 +156,17 @@ function placeShip(placeToPut, ship, holdingDiv) {
     xGoesOutLeft = xCord - offset;
     condition = xGoesOutRight > 9 || xGoesOutLeft < 0;
   }
+  playerGameboard.impossibleMoves.some((move) => {
+    if (ship.classList.contains("vertical")) {
+      if (move.x === xCord && move.y >= yCord - offset && move.y < yCord + lengthOfShip - offset) {
+        condition = true;
+      }
+    } else {
+      if (move.y === yCord && move.x >= xCord - offset && move.x < xCord + lengthOfShip - offset) {
+        condition = true;
+      }
+    }
+  });
 
   if (condition) return;
 
@@ -225,6 +191,51 @@ function placeShip(placeToPut, ship, holdingDiv) {
   // Create the ship and place it on the game board
   playerGameboard.createShip(lengthOfShip, xCoords, yCoords);
   playerGameboard.placeShips();
+}
+
+aiGameboardDivs.forEach((div) => {
+  div.addEventListener("click", handleAiGameboardClick);
+});
+
+shipsPlaceholder.forEach((ship) => {
+  const divs = ship.querySelectorAll("div");
+
+  ship.addEventListener("dragstart", () => {
+    ship.classList.add("dragging");
+
+    const impossibleDivs = playerGameboard.impossibleMoves.map(handleImpossibleMove).filter(Boolean);
+    impossibleDivs.forEach((div) => div.classList.add("impossible-move"));
+  });
+
+  ship.addEventListener("dragend", () => {
+    ship.classList.remove("dragging");
+
+    playerGameboard.impossibleMoves
+      .map(handleImpossibleMove)
+      .filter(Boolean)
+      .forEach((div) => div.classList.remove("impossible-move"));
+
+    divs.forEach((div) => {
+      div.classList.remove("holding-div");
+    });
+  });
+
+  ship.addEventListener("click", () => {
+    ship.classList.toggle("vertical");
+  });
+
+  divs.forEach((div) => {
+    div.addEventListener("mousedown", (e) => {
+      e.target.classList.add("holding-div");
+    });
+  });
+});
+
+function handleImpossibleMove(move) {
+  if (move.x < 0 || move.y < 0 || move.x > 9 || move.y > 9) return;
+  const div = document.querySelector(`#player-board [data-x="${move.x}"][data-y="${move.y}"]`);
+  if (div.classList.contains("ship")) return;
+  return div;
 }
 
 playerBoard.addEventListener("dragover", (event) => {
