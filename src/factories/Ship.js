@@ -3,17 +3,14 @@ const Ship = (length, xCords, yCords) => {
 
   ship.lengthToSunk = length;
   ship.numOfHit = 0;
-  ship.Sunk = false;
   ship.xCords = xCords;
   ship.yCords = yCords;
+  ship.isSunk = false;
 
   ship.hit = () => {
     ship.numOfHit++;
-  };
-
-  ship.isSunk = () => {
     if (ship.lengthToSunk === ship.numOfHit) {
-      ship.Sunk = true;
+      ship.isSunk = true;
     }
   };
 
