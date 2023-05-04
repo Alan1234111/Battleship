@@ -34,19 +34,33 @@ function randomShipCoords(length, gameboard) {
   let isTheSame = false;
   const xCoords = [];
   const yCoords = [];
+  let postion = verticallyOrHorizontally();
 
   do {
     xCordFirst = Math.floor(Math.random() * (10 - length + 1));
     yCordFirst = Math.floor(Math.random() * (10 - length + 1));
 
-    isTheSame = gameboard.ships.some((ship) => {
-      let isXTheSame = ship.xCords.some((cord) => cord === xCordFirst);
-      let isYTheSame = ship.yCords.some((cord) => cord === yCordFirst);
-      return isXTheSame && isYTheSame;
+    isTheSame = gameboard.impossibleMoves.some((move) => {
+      let same = false;
+      if (postion === "verticaly") {
+        for (let i = 0; i <= length; i++) {
+          if (move.x === xCordFirst && move.y === yCordFirst + i) {
+            same = true;
+          }
+        }
+      } else {
+        for (let i = 0; i <= length; i++) {
+          if (move.x === xCordFirst + i && move.y === yCordFirst) {
+            same = true;
+          }
+        }
+      }
+
+      return same;
     });
   } while (isTheSame);
 
-  if (verticallyOrHorizontally() === "verticaly") {
+  if (postion === "verticaly") {
     for (let i = 0; i < length; i++) {
       xCoords.push(xCordFirst);
       yCoords.push(yCordFirst + i);
@@ -71,8 +85,10 @@ function resetBoard() {
 
   aiGameboard.ships.length = 0;
   aiGameboard.recordedShots.length = 0;
+  aiGameboard.impossibleMoves.length = 0;
   playerGameboard.ships.length = 0;
   playerGameboard.recordedShots.length = 0;
+  playerGameboard.impossibleMoves.length = 0;
 
   shipsPlaceholder.forEach((ship) => ship.classList.add("hide"));
   shipsPlaceholder[0].classList.remove("hide");

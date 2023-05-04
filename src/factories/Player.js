@@ -5,7 +5,7 @@ const Player = () => {
     if (gameboard.isAlreadyHit(xCord, yCord) || player.turn === "Ai") return;
 
     player.turn = "Ai";
-    gameboard.receiveAttack(tile, xCord, yCord);
+    gameboard.receiveAttack("enemy-board", tile, xCord, yCord);
   };
 
   player.AiTurn = (gameboard) => {
@@ -13,10 +13,10 @@ const Player = () => {
     do {
       xCord = Math.floor(Math.random() * 10);
       yCord = Math.floor(Math.random() * 10);
-    } while (gameboard.recordedShots.some((coord) => coord[0] === xCord && coord[1] === yCord));
+    } while (gameboard.recordedShots.some((coord) => coord.x === xCord && coord.y === yCord));
 
     const tile = gameboard.getTile(xCord, yCord);
-    gameboard.receiveAttack(tile, xCord, yCord);
+    gameboard.receiveAttack("player-board", tile, xCord, yCord);
   };
 
   return player;
