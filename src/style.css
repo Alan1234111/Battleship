@@ -260,6 +260,18 @@
   z-index: 3;
 }
 
+.wave {
+  position: fixed;
+  bottom: -10%;
+  user-select: none;
+  opacity: 0.6;
+  z-index: -1;
+}
+
+.wave img {
+  width: 100vw;
+}
+
 .ship {
   background-color: #0284c7;
 }
