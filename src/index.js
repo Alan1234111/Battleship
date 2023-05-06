@@ -16,7 +16,7 @@ const playerGameboardDivs = document.querySelectorAll("#player-board div");
 const startButton = document.getElementById("start");
 const enemyGameboardDiv = document.getElementById("enemy-board");
 const playerBoard = document.getElementById("player-board");
-const shipsPlaceholder = document.querySelectorAll(".place-ships .ship-draggable");
+const shipsPlaceholder = document.querySelectorAll(".ships-container .ship-draggable");
 
 function verticallyOrHorizontally() {
   const postion = Math.floor(Math.random() * 2);

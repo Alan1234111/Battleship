@@ -11,13 +11,17 @@
   <body>
     <div class="container">
       <header class="header" id="header">
-        <h1>Battleship</h1>
+        <a class="github-link" href="https://github.com/Alan1234111/Battleship " target="_blank">
+          <h1>Battleship</h1>
+        </a>
         <nav class="nav" id="nav">
           <button class="nav-btn" id="home">Home</button>
           <button class="nav-btn" id="rules">How to play</button>
         </nav>
       </header>
+
       <div class="enemy-board before-start" id="enemy-board">
+        <p class="board-name">Enemy Board</p>
         <button id="start">Start</button>
         <div data-x="0" data-y="0"></div>
         <div data-x="1" data-y="0"></div>
@@ -121,6 +125,7 @@
         <div data-x="9" data-y="9"></div>
       </div>
       <div class="player-board" id="player-board">
+        <p class="board-name">Player Board</p>
         <div data-x="0" data-y="0"></div>
         <div data-x="1" data-y="0"></div>
         <div data-x="2" data-y="0"></div>
@@ -228,7 +233,7 @@
         <button class="btn" id="reset">Reset board</button>
       </div>
 
-      <div class="place-ships" id="place-ships">
+      <div class="ships-container" id="ships-container">
         <div class="ship-draggable" id="carrier" draggable="true">
           <div></div>
           <div></div>
