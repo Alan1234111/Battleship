@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap");
 
 * {
   margin: 0;
@@ -7,64 +7,111 @@
 }
 
 .container {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 6fr 5fr;
+  grid-template-rows: 4rem 1.5fr 1fr;
   height: 100vh;
   width: 100vw;
+  padding: 0 4rem;
+  font-family: "Roboto", sans-serif;
 }
 
 #header {
   display: flex;
   justify-content: space-between;
-  padding: 1rem 2rem;
+  padding: 1rem 0;
   grid-column: 1/ 3;
   grid-row: 1/2;
-  font-family: "Bruno Ace SC", cursive;
+}
+
+.github-link {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
 }
 
 .nav-btn {
-  border: none;
+  position: relative;
+  display: inline-block;
   padding: 0.5rem;
   margin-right: 1rem;
-  background-color: transparent;
+  border: none;
   font-size: 1.2rem;
   font-weight: bold;
-  transition: 0.2s;
+  background-color: transparent;
+  cursor: pointer;
 }
 
-.nav-btn:hover {
-  border-bottom: 1px solid black;
+.nav-btn::before,
+.github-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: #333;
+  transition: width 0.2s ease;
+}
+
+.github-link::before {
+  bottom: -5px;
+}
+
+.nav-btn:hover::before,
+.github-link:hover::before {
+  width: 100%;
+}
+
+.which-board {
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+.board-name {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
 }
 
 #enemy-board,
 #player-board {
   grid-row: 2/3;
+  position: relative;
+  top: 30%;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   grid-auto-rows: 1fr;
-  width: 400px;
-  height: 400px;
-  margin-top: 4rem;
-  justify-self: center;
+  width: 300px;
+  height: 300px;
   background-color: #fff;
   user-select: none;
+  border: 1px solid #333;
 }
 
 #enemy-board {
-  position: relative;
   grid-column: 1/2;
-  margin-left: 12rem;
+  margin-right: 4.5rem;
+  justify-self: end;
+  cursor: crosshair;
 }
 
 #player-board {
   grid-column: 2 / 3;
-  margin-right: 12rem;
+  margin-left: 4.5rem;
+  justify-self: start;
 }
 
 #enemy-board div,
 #player-board div {
-  border: 1px solid gray;
+  border: 1px solid #7dd3fc;
+  opacity: 0.5;
 }
 
 .before-start::before {
@@ -77,6 +124,8 @@
   background-color: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(1px);
   text-shadow: white 0px 0 5px;
+  z-index: 2;
+  cursor: auto;
 }
 
 #start {
@@ -85,14 +134,16 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 7rem;
-  color: white;
-  font-size: 1.2rem;
   padding: 0.6rem 1.2rem;
-  background: #0065d8;
   border: none;
   border-radius: 1rem;
+  font-size: 1.2rem;
+  color: white;
   box-shadow: #00000033 0 2px 2px;
+  background: #0065d8;
   transition: 0.1s ease-in-out;
+  cursor: pointer;
+  z-index: 3;
 }
 
 #start:hover {
@@ -101,39 +152,55 @@
 }
 
 #options {
-  grid-column: 2/3;
-  justify-self: center;
-  margin-top: 3rem;
-  margin-right: 12rem;
+  grid-area: 3 / 2 / 4 / 3;
+  margin-left: calc(4.5rem + (300px / 2));
+  transform: translateX(-50%);
+  justify-self: start;
 }
 
-.btn {
+#options .btn {
   margin: 0 0.5rem;
-  border: none;
   padding: 0.5rem;
   border-radius: 8px;
-  background-color: #001f3f;
+  border: none;
+  box-shadow: #00000033 0 2px 2px;
+  background: #0065d8;
   color: white;
+  transition: 0.2s;
 }
 
-.btn:hover {
+#options .btn:hover {
   opacity: 0.8;
+  scale: 1.05;
 }
 
-.ship {
-  background-color: #000080;
+.ships-container {
+  grid-area: 3 / 2 / 4 / 3;
+  justify-self: start;
+  margin-left: calc(4.5rem + (300px / 2));
+  margin-top: 4rem;
+  transform: translateX(-50%);
 }
 
-.hit {
-  background-color: #ffa500;
+.ship-draggable {
+  display: flex;
+  justify-content: center;
+  cursor: grab;
 }
 
-.miss-hit {
-  background-color: #c0c0c0;
+.ship-draggable.vertical {
+  flex-direction: column;
 }
 
-.sunk {
-  background-color: #800000;
+.ship-draggable div {
+  width: 30px;
+  height: 30px;
+  background-color: #0284c7;
+  border: 1px solid #7dd3fc80;
+}
+
+.ship-draggable div:hover {
+  opacity: 0.8;
 }
 
 .modal {
@@ -143,11 +210,11 @@
   transform: translate(-50%, -50%);
   width: 500px;
   height: 300px;
-  background-color: white;
+  background-color: #f0f9ff;
   border: 1px solid #333333;
   border-radius: 8px;
-  /* opacity: 0.9; */
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  z-index: 3;
 }
 
 .modal-content {
@@ -167,17 +234,19 @@
   font-size: 1.2rem;
 }
 
-.modal-content .close-button {
+.close-button {
   padding: 0.6rem 4rem;
   border-radius: 8px;
   border: none;
-  background-color: black;
+  box-shadow: #00000033 0 2px 2px;
+  background: #0065d8;
   color: white;
-  transition: 0.1s;
+  transition: 0.2s;
 }
 
-.modal-content .close-button:hover {
+.close-button:hover {
   opacity: 0.9;
+  scale: 1.05;
 }
 
 .wall {
@@ -188,8 +257,29 @@
   height: 100vh;
   opacity: 0.2;
   background-color: black;
+  z-index: 3;
+}
+
+.ship {
+  background-color: #0284c7;
+}
+
+.hit {
+  background-color: #ffa500;
+}
+
+.miss-hit {
+  background-color: #c0c0c0;
+}
+
+.sunk {
+  background-color: #800000;
+}
+
+.impossible-move {
+  background-color: #fecaca;
 }
 
 .hide {
-  display: none;
+  display: none !important;
 }
