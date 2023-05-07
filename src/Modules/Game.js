@@ -47,13 +47,24 @@ export default class Game {
           e.target.classList.add("holding-div");
         });
       });
+
+      //for mobile
+      ship.addEventListener("touchstart", () => {
+        this.dragStart(ship);
+      });
     });
 
     this.playerBoard.addEventListener("dragover", (event) => {
       event.preventDefault();
     });
 
+    this.playerBoard.addEventListener("touchmove", (event) => {
+      event.preventDefault();
+    });
+
     this.playerBoard.addEventListener("drop", this.drop);
+    //for mobile drag and drop
+    this.playerBoard.addEventListener("touchend", this.drop, false);
   }
 
   startTheGame = () => {
@@ -111,7 +122,7 @@ export default class Game {
     this.randomShipCoords(3, this.playerGameboard);
     this.randomShipCoords(3, this.playerGameboard);
     this.randomShipCoords(2, this.playerGameboard);
-    this.playerGameboard.placeShips();
+    this.playerGameboard.placePlayerShips();
     this.startButton.addEventListener("click", this.startTheGame, {once: true});
   };
 
@@ -124,12 +135,8 @@ export default class Game {
   }
 
   handleAiGameboardClick = (e) => {
-    this.player.playerTurn(this.aiGameboard, e.target, e.target.dataset.x, e.target.dataset.y);
-
-    if (this.player.turn !== "player") {
-      this.player.turn = "player";
-      this.player.AiTurn(this.playerGameboard);
-    }
+    this.player.playerTurn(this.aiGameboard, this.playerGameboard, e.target.dataset.x, e.target.dataset.y);
+    // this.player.isTurnOver = false;
 
     if (this.playerGameboard.isAllShipSunk()) {
       this.showWinner("You Lost! Maybe the next time");
@@ -168,7 +175,7 @@ export default class Game {
 
     // Create the ship and place it on the game board
     this.playerGameboard.createShip(lengthOfShip, xCoords, yCoords);
-    this.playerGameboard.placeShips();
+    this.playerGameboard.placePlayerShips();
   }
 
   #isOffTheBoard(ship, offset, lengthOfShip, xCord, yCord) {
