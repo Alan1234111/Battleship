@@ -1,31 +1,30 @@
+import {test, expect, describe} from "@jest/globals";
 import Ship from "../Ship";
-import {it, expect, describe, beforeEach} from "@jest/globals";
 
-describe("Ship functions", () => {
-  let destroyer;
+describe("Ship", () => {
+  test("returns an object with the correct properties", () => {
+    const ship = Ship(3, [1, 2, 3], [4, 4, 4]);
 
-  beforeEach(() => {
-    destroyer = Ship(2, [2, 3], [3, 3]);
+    expect(ship.lengthToSunk).toBe(3);
+    expect(ship.numOfHit).toBe(0);
+    expect(ship.xCords).toEqual([1, 2, 3]);
+    expect(ship.yCords).toEqual([4, 4, 4]);
+    expect(ship.isSunk).toBe(false);
   });
 
-  it("should increase the number of hits by one when hit is called", () => {
-    destroyer.hit();
+  test("hit function updates the correct properties", () => {
+    const ship = Ship(3, [1, 2, 3], [4, 4, 4]);
 
-    expect(destroyer.numOfHit).toBe(1);
-  });
+    ship.hit();
+    expect(ship.numOfHit).toBe(1);
+    expect(ship.isSunk).toBe(false);
 
-  it("should set the 'sunk' property to true when the ship is sunk", () => {
-    destroyer.hit();
-    destroyer.hit();
-    destroyer.isSunk();
-    expect(destroyer.Sunk).toBe(true);
-  });
+    ship.hit();
+    expect(ship.numOfHit).toBe(2);
+    expect(ship.isSunk).toBe(false);
 
-  it("should return the correct x coordinates of the ship", () => {
-    expect(destroyer.xCords).toEqual([2, 3]);
-  });
-
-  it("should return the correct y coordinates of the ship", () => {
-    expect(destroyer.yCords).toEqual([3, 3]);
+    ship.hit();
+    expect(ship.numOfHit).toBe(3);
+    expect(ship.isSunk).toBe(true);
   });
 });
