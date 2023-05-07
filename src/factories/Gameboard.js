@@ -23,10 +23,10 @@ const Gameboard = () => {
   const receiveAttack = (gameboard, xHitCord, yHitCord) => {
     const tile = getTile(gameboard, xHitCord, yHitCord);
     const ship = findShipAtCords(xHitCord, yHitCord);
-
-    ship ? handleHit(gameboard, ship, tile) : handleMiss(tile);
+    const hit = ship ? handleHit(gameboard, ship, tile) : handleMiss(tile);
 
     recordedShots.push({x: xHitCord, y: yHitCord});
+    return hit;
   };
 
   const getTile = (gameboard, xCord, yCord) => {
@@ -39,7 +39,6 @@ const Gameboard = () => {
 
   const handleHit = (gameboard, ship, tile) => {
     ship.hit();
-    tile.classList.add("hit");
 
     if (ship.isSunk) {
       ship.xCords.forEach((xCord, i) => {
@@ -48,10 +47,15 @@ const Gameboard = () => {
         div.classList.add("sunk");
       });
     }
+
+    tile.classList.add("hit");
+
+    return true;
   };
 
   const handleMiss = (tile) => {
     tile.classList.add("miss-hit");
+    return false;
   };
 
   const isAllShipSunk = () => {
@@ -62,7 +66,7 @@ const Gameboard = () => {
     return recordedShots.some((shot) => shot.x === xCord && shot.y === yCord);
   };
 
-  function addImposibleMoves(ship) {
+  const addImposibleMoves = (ship) => {
     const indexOfLastTile = ship.lengthToSunk - 1;
     const firstTile = [ship.xCords[0], ship.yCords[0]];
     const lastTile = [ship.xCords[indexOfLastTile], ship.yCords[indexOfLastTile]];
@@ -122,7 +126,7 @@ const Gameboard = () => {
         }
       });
     }
-  }
+  };
 
   return {
     ships,

@@ -1,11 +1,18 @@
 const Player = () => {
   const player = {};
-  player.turn = "player";
-  player.playerTurn = (gameboard, tile, xCord, yCord) => {
-    if (gameboard.isAlreadyHit(xCord, yCord) || player.turn === "Ai") return;
+  player.isTurnOver = true;
+  player.delay = 400;
 
-    player.turn = "Ai";
-    gameboard.receiveAttack("enemy-board", tile, xCord, yCord);
+  player.playerTurn = (AiGameboard, playerGameboard, xCord, yCord) => {
+    if (AiGameboard.isAlreadyHit(xCord, yCord) || !player.isTurnOver) return;
+    const hit = AiGameboard.receiveAttack("enemy-board", xCord, yCord);
+
+    if (!hit) {
+      player.isTurnOver = false;
+      setTimeout(() => {
+        player.AiTurn(playerGameboard);
+      }, player.delay);
+    }
   };
 
   player.AiTurn = (gameboard) => {
@@ -15,8 +22,15 @@ const Player = () => {
       yCord = Math.floor(Math.random() * 10);
     } while (gameboard.recordedShots.some((coord) => coord.x === xCord && coord.y === yCord));
 
-    const tile = gameboard.getTile(xCord, yCord);
-    gameboard.receiveAttack("player-board", tile, xCord, yCord);
+    const hit = gameboard.receiveAttack("player-board", xCord, yCord);
+
+    if (hit) {
+      return setTimeout(() => {
+        player.AiTurn(gameboard);
+      }, player.delay);
+    }
+
+    player.isTurnOver = true;
   };
 
   return player;
