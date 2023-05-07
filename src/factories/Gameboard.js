@@ -11,7 +11,7 @@ const Gameboard = () => {
     addImposibleMoves(ship);
   };
 
-  const placeShips = () => {
+  const placePlayerShips = () => {
     ships.forEach((ship) => {
       for (let i = 0; i < ship.xCords.length; i++) {
         const div = document.querySelector(`#player-board [data-x="${ship.xCords[i]}"][data-y="${ship.yCords[i]}"]`);
@@ -20,31 +20,38 @@ const Gameboard = () => {
     });
   };
 
-  const receiveAttack = (gameboard, tile, xHitCord, yHitCord) => {
-    let hit = false;
-    const ship = ships.find((ship) => {
-      return ship.xCords.includes(parseInt(xHitCord)) && ship.yCords.includes(parseInt(yHitCord));
-    });
+  const receiveAttack = (gameboard, xHitCord, yHitCord) => {
+    const tile = getTile(gameboard, xHitCord, yHitCord);
+    const ship = findShipAtCords(xHitCord, yHitCord);
 
-    if (ship) {
-      hit = true;
-      ship.hit();
-      tile.classList.add("hit");
-
-      if (ship.isSunk) {
-        ship.xCords.forEach((xCord, i) => {
-          const div = document.querySelector(`#${gameboard} [data-x="${xCord}"][data-y="${ship.yCords[i]}"]`);
-          div.classList.remove("ship");
-          div.classList.add("sunk");
-        });
-      }
-    }
-
-    if (!hit) {
-      tile.classList.add("miss-hit");
-    }
+    ship ? handleHit(gameboard, ship, tile) : handleMiss(tile);
 
     recordedShots.push({x: xHitCord, y: yHitCord});
+  };
+
+  const getTile = (gameboard, xCord, yCord) => {
+    return document.querySelector(`#${gameboard} [data-x="${xCord}"][data-y="${yCord}"]`);
+  };
+
+  const findShipAtCords = (x, y) => {
+    return ships.find((ship) => ship.xCords.includes(parseInt(x)) && ship.yCords.includes(parseInt(y)));
+  };
+
+  const handleHit = (gameboard, ship, tile) => {
+    ship.hit();
+    tile.classList.add("hit");
+
+    if (ship.isSunk) {
+      ship.xCords.forEach((xCord, i) => {
+        const div = document.querySelector(`#${gameboard} [data-x="${xCord}"][data-y="${ship.yCords[i]}"]`);
+        div.classList.remove("ship");
+        div.classList.add("sunk");
+      });
+    }
+  };
+
+  const handleMiss = (tile) => {
+    tile.classList.add("miss-hit");
   };
 
   const isAllShipSunk = () => {
@@ -52,18 +59,7 @@ const Gameboard = () => {
   };
 
   const isAlreadyHit = (xCord, yCord) => {
-    let hit = false;
-    recordedShots.forEach((shot) => {
-      if (shot.x === xCord && shot.y === yCord) {
-        hit = true;
-      }
-    });
-
-    return hit;
-  };
-
-  const getTile = (xCord, yCord) => {
-    return document.querySelector(`#player-board [data-x="${xCord}"][data-y="${yCord}"]`);
+    return recordedShots.some((shot) => shot.x === xCord && shot.y === yCord);
   };
 
   function addImposibleMoves(ship) {
@@ -124,20 +120,15 @@ const Gameboard = () => {
           impossibleMoves.push({x: xCord, y: ship.yCords[i] + 1});
           impossibleMoves.push({x: xCord, y: ship.yCords[i] - 1});
         }
-
-        //2
-        //
       });
     }
-    console.log(impossibleMoves);
-    // console.log(impossibleMoves);
   }
 
   return {
     ships,
     recordedShots,
     createShip,
-    placeShips,
+    placePlayerShips,
     receiveAttack,
     isAllShipSunk,
     isAlreadyHit,
