@@ -1,5 +1,5 @@
 import Gameboard from "../Gameboard";
-import {it, expect, describe, beforeEach} from "@jest/globals";
+import {expect, describe, test, beforeEach} from "@jest/globals";
 import {JSDOM} from "jsdom";
 
 const dom = new JSDOM();
@@ -7,51 +7,65 @@ global.document = dom.window.document;
 
 describe("Gameboard", () => {
   let gameboard;
-  let firstTile;
-  let secondTile;
-  let thirdTile;
-  let tile;
 
   beforeEach(() => {
+    document.body.innerHTML = `
+      <div id="player-board">
+        <div data-x="1" data-y="4"></div>
+        <div data-x="2" data-y="4"></div>
+        <div data-x="3" data-y="4"></div>
+        <div data-x="4" data-y="4"></div>
+      </div>
+    `;
+
     gameboard = Gameboard();
-    firstTile = document.createElement("div");
-    secondTile = document.createElement("div");
-    thirdTile = document.createElement("div");
-    tile = document.createElement("div");
-
-    gameboard.createShip(5, [2, 3, 4, 5, 6], [1, 1, 1, 1, 1]);
-    gameboard.createShip(4, [2, 2, 2, 2], [1, 2, 3, 4]);
-    gameboard.createShip(3, [4, 5, 6], [4, 4, 4]);
+    gameboard.createShip(3, [1, 2, 3], [4, 4, 4]);
   });
 
-  it("should register hit on a ship when hit area hit the ship", () => {
-    gameboard.receiveAttack(firstTile, 2, 3);
-    expect(gameboard.ships[1].numOfHit).toBe(1);
-  });
-
-  it("should record missed shots", () => {
-    gameboard.receiveAttack(firstTile, 7, 7);
-    gameboard.receiveAttack(secondTile, 7, 6);
-    gameboard.receiveAttack(thirdTile, 2, 3);
-    expect(gameboard.recordedShots).toEqual([
-      [7, 7],
-      [7, 6],
-      [2, 3],
-    ]);
-  });
-
-  it("should detect if all ships have been sunk", () => {
-    gameboard.ships.forEach((ship) => {
-      for (let i = 0; i < ship.xCords.length; i++) {
-        gameboard.receiveAttack(tile, ship.xCords[i], ship.yCords[i]);
-      }
+  describe("createShip", () => {
+    test("adds a new ship to the gameboard", () => {
+      expect(gameboard.ships.length).toBe(1);
     });
 
-    expect(gameboard.isAllShipSunk()).toBe(true);
+    test("adds impossible moves for the ship", () => {
+      expect(gameboard.impossibleMoves.length).toBeGreaterThan(0);
+    });
   });
 
-  it("should return true if tile was already hitten", () => {
-    gameboard.receiveAttack(firstTile, 7, 7);
-    expect(gameboard.isAlreadyHit(7, 7)).toBe(true);
+  describe("placePlayerShips", () => {
+    test("places the player's ships on the gameboard", () => {
+      gameboard.placePlayerShips();
+      const divs = document.querySelectorAll("#player-board div");
+      expect(divs[0].classList.contains("ship")).toBe(true);
+      expect(divs[1].classList.contains("ship")).toBe(true);
+      expect(divs[2].classList.contains("ship")).toBe(true);
+    });
+  });
+
+  describe("receiveAttack", () => {
+    test("handles a hit on a ship", () => {
+      gameboard.receiveAttack("player-board", 1, 4);
+      const divs = document.querySelectorAll("#player-board div");
+      expect(divs[0].classList.contains("hit")).toBe(true);
+    });
+
+    test("handles a miss on a ship", () => {
+      gameboard.receiveAttack("player-board", 4, 4);
+      const divs = document.querySelectorAll("#player-board div");
+      expect(divs[3].classList.contains("miss-hit")).toBe(true);
+    });
+  });
+
+  describe("isAllShipSunk", () => {
+    test("returns false if not all ships are sunk", () => {
+      expect(gameboard.isAllShipSunk()).toBe(false);
+    });
+
+    test("returns true if all ships are sunk", () => {
+      gameboard.receiveAttack("player-board", 1, 4);
+      gameboard.receiveAttack("player-board", 2, 4);
+      gameboard.receiveAttack("player-board", 3, 4);
+      expect(gameboard.isAllShipSunk()).toBe(true);
+    });
   });
 });
