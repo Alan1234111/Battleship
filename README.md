@@ -2,7 +2,7 @@
 
 ## DESCRIPTION
 
-Battleship game with Ai
+Battleship game with Ai and drag and drop events
 
 ## LIVE DEMO
 
